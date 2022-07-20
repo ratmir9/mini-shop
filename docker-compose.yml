@@ -1,0 +1,32 @@
+version: '3'
+services:
+  shop_db:
+    image: postgres
+    container_name: django_db
+    restart: always
+    env_file:
+      - ./.env.db
+    volumes:
+      - shop_db_data:/var/lib/postgresql/data/
+  django_app:
+    build: .
+    container_name: django_shop
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/app/
+    ports:
+      - '8000:8000'
+    restart: always
+    env_file:
+      - ./.env
+    depends_on:
+      - shop_db
+  adminer:
+    image: adminer
+    container_name: django_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    
+volumes:
+  shop_db_data:
